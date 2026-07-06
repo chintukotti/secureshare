@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply text-slate-900 antialiased; }
+  button, input, textarea, select { font: inherit; }
+}
+
+@layer components {
+  .form-label { @apply mb-1 block text-sm font-medium text-slate-700; }
+  .form-error { @apply mt-1 text-sm text-red-600; }
+}

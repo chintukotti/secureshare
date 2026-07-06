@@ -1,20 +1,62 @@
-# SecureShare - Secure Cloud File Sharing Platform
+# SecureShare
 
-SecureShare is a production-style cloud-based file sharing platform built using React, FastAPI, and AWS. It allows users to securely upload, organize, manage, and share files with advanced controls such as expiring links, one-time download links, password-protected sharing, analytics, activity logs, and email notifications.
+## Secure Cloud File Sharing and Access Control Platform Using AWS
+
+SecureShare is a full-stack cloud-based file sharing platform built with **React**, **FastAPI**, and **AWS**. It allows users to securely upload, organize, manage, and share files with advanced controls such as expiring links, password-protected links, one-time downloads, download analytics, activity logs, and email notifications.
+
+This project was built as a production-style cloud portfolio project to demonstrate frontend development, backend API design, AWS service integration, secure file handling, and EC2/Nginx deployment.
 
 ---
 
-## Project Abstract
+## Table of Contents
 
-SecureShare is a secure cloud file sharing web application designed to provide controlled and trackable document sharing. Unlike general-purpose storage platforms, SecureShare focuses on privacy, security, and user-controlled file access. Users can upload files to Amazon S3, organize them into folders, generate secure share links with expiry time, protect links with passwords, create one-time download links, and monitor download activity. The system uses Amazon Cognito for authentication, Amazon DynamoDB for metadata storage, Amazon S3 for file storage, Amazon SNS for email notifications, Amazon EC2 for backend hosting, API Gateway/Nginx for API routing, and CloudWatch for monitoring. The project demonstrates a real-world full-stack cloud architecture following scalable and secure design principles.
+- [Project Overview](#project-overview)
+- [Problem Statement](#problem-statement)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [AWS Services Used](#aws-services-used)
+- [System Architecture](#system-architecture)
+- [Data Flow](#data-flow)
+- [Folder Structure](#folder-structure)
+- [DynamoDB Tables](#dynamodb-tables)
+- [API Overview](#api-overview)
+- [Local Development Setup](#local-development-setup)
+- [EC2 and Nginx Deployment](#ec2-and-nginx-deployment)
+- [Environment Variables](#environment-variables)
+- [Security Highlights](#security-highlights)
+- [Future Enhancements](#future-enhancements)
+- [Project Status](#project-status)
+- [Author](#author)
+
+---
+
+## Project Overview
+
+SecureShare is designed for users who need more control over file sharing than normal cloud storage platforms provide. Users can upload files, create folders, move/copy files, generate secure share links, set expiry times, protect links with passwords, and track download activity.
+
+The application uses:
+
+- **React** for the frontend UI
+- **FastAPI** for backend APIs
+- **Amazon S3** for private file storage
+- **Amazon DynamoDB** for metadata and analytics
+- **Amazon Cognito** for authentication
+- **Amazon SNS** for email notifications
+- **Amazon EC2 + Nginx** for deployment
 
 ---
 
 ## Problem Statement
 
-Existing cloud storage platforms such as Google Drive and Dropbox are useful for general file storage, but they do not always provide simple, built-in controls for highly secure and trackable file sharing. Users often need features such as one-time download links, custom expiry times, password-protected access, detailed download logs, activity history, and email notifications when files are accessed.
+General-purpose cloud storage platforms are useful for storing files, but they do not always provide simple built-in controls for secure and trackable sharing. Users may need to share sensitive files such as resumes, certificates, assignments, legal documents, or medical reports with restrictions such as:
 
-SecureShare solves this problem by providing a security-focused file sharing platform where users can control how files are accessed, monitor file activity, and securely share sensitive documents such as resumes, certificates, legal documents, academic files, and internal company documents.
+- Link should expire after a specific time
+- Link should work only once
+- Link should require a password
+- Owner should know when a file is downloaded
+- File access should be logged for auditing
+
+SecureShare solves this problem by providing a secure cloud file-sharing platform with access control, analytics, and notifications.
 
 ---
 
@@ -23,41 +65,39 @@ SecureShare solves this problem by providing a security-focused file sharing pla
 ### Authentication
 
 - User registration
-- Login
-- Logout
 - Email verification
+- Login/logout
 - Forgot password
 - Change password
-- Cognito JWT-based authentication
+- JWT-based protected APIs using Amazon Cognito
 
 ### File Management
 
 - Upload files
 - Download files
+- Rename files
 - Delete files
 - Trash and restore
 - Permanent delete
-- Rename files
 - Create folders
 - Open folders
-- Upload files inside folders
+- Upload inside folders
 - Move files/folders to another folder
 - Copy files to another folder
 - Move items to My Files/root
-- Select multiple items for bulk move/copy
+- Select multiple files/folders for bulk actions
 - Search and sort files
 - Favorite files
 
 ### Secure Sharing
 
-- Generate secure share links
-- Expiring links
+- Generate public share links
+- 1 hour, 24 hours, 7 days expiry options
 - Custom expiry in hours/days
 - No-expiry links
-- One-time download links
 - Password-protected links
-- Public share page
-- Copy share URL
+- One-time download links
+- Public share download page
 
 ### Analytics and Logs
 
@@ -65,28 +105,24 @@ SecureShare solves this problem by providing a security-focused file sharing pla
 - View count
 - Recent downloads
 - Most downloaded files
-- Activity logs
-- Upload history
-- Download history
-- Delete history
-- Share history
+- Upload/download/delete/share activity logs
 
 ### Notifications
 
-- Email notification when a file is shared
-- Email notification when a file is downloaded
-- Email notification when a link expires
+- Email when file is shared
+- Email when file is downloaded
+- Email when link expires
 
 ### Deployment
 
-- FastAPI backend deployed on EC2
-- React frontend deployed using Nginx on EC2
-- API Gateway HTTP API integration
-- S3 direct uploads using pre-signed URLs
+- Backend hosted on EC2 using systemd
+- Frontend hosted on EC2 using Nginx
+- Nginx reverse proxy for backend APIs
+- Optional API Gateway HTTP API integration
 
 ---
 
-## Technologies Used
+## Technology Stack
 
 ### Frontend
 
@@ -107,240 +143,198 @@ SecureShare solves this problem by providing a security-focused file sharing pla
 - Uvicorn
 - Boto3
 - Pydantic
-- Systemd service deployment
+- Pydantic Settings
 
-### AWS Services
+### AWS
 
-- Amazon EC2 - backend and frontend hosting
-- Amazon S3 - secure file storage
-- Amazon DynamoDB - metadata, logs, analytics, and share links
-- Amazon Cognito - authentication and email verification
-- Amazon SNS - email notifications
-- Amazon API Gateway - API routing
-- Amazon CloudWatch - monitoring and logs
-- IAM Role for EC2 - secure AWS service access without hardcoded keys
+- Amazon EC2
+- Amazon S3
+- Amazon DynamoDB
+- Amazon Cognito
+- Amazon SNS
+- Amazon API Gateway
+- Amazon CloudWatch
+- IAM Role for EC2
 
-### Deployment Tools
+### Deployment
 
 - Nginx
-- Linux systemd
+- systemd
 - SSH/SCP
 - Amazon Linux EC2
 
 ---
 
-## High-Level Architecture
+## AWS Services Used
+
+| AWS Service | Purpose |
+|---|---|
+| Amazon Cognito | User registration, login, email verification, password reset |
+| Amazon S3 | Private file storage |
+| Amazon DynamoDB | File metadata, folders, share links, logs, analytics |
+| Amazon SNS | Email notifications |
+| Amazon EC2 | Hosting backend and frontend |
+| Amazon API Gateway | Public API routing during API deployment/testing |
+| Amazon CloudWatch | Logs and monitoring |
+| IAM Role | Secure AWS permissions for EC2 without hardcoded keys |
+
+---
+
+## System Architecture
 
 ```mermaid
 flowchart TD
-    User[User Browser] --> Frontend[React Frontend]
-    Frontend --> Nginx[Nginx on EC2]
-    Nginx -->|/api requests| FastAPI[FastAPI Backend on EC2]
-    Nginx -->|Static files| ReactBuild[React Build Files]
+    User[User Browser] --> Nginx[Nginx on EC2]
+    Nginx --> React[React Static Frontend]
+    Nginx -->|/api/v1 requests| FastAPI[FastAPI Backend on EC2]
 
     FastAPI --> Cognito[Amazon Cognito]
-    FastAPI --> DynamoDB[Amazon DynamoDB]
     FastAPI --> S3[Amazon S3]
+    FastAPI --> DynamoDB[Amazon DynamoDB]
     FastAPI --> SNS[Amazon SNS]
-    FastAPI --> CloudWatch[Amazon CloudWatch Logs]
+    FastAPI --> CloudWatch[Amazon CloudWatch]
 
-    EC2Role[EC2 IAM Role] --> FastAPI
-    EC2Role --> S3
-    EC2Role --> DynamoDB
-    EC2Role --> Cognito
-    EC2Role --> SNS
+    Role[EC2 IAM Role] --> FastAPI
+    Role --> S3
+    Role --> DynamoDB
+    Role --> Cognito
+    Role --> SNS
 ```
 
 ---
 
-## Data Flow Diagram
+## Data Flow
 
-### Login Flow
+### Authentication Flow
 
 ```mermaid
 sequenceDiagram
-    participant U as User
-    participant R as React Frontend
-    participant B as FastAPI Backend
-    participant C as Amazon Cognito
-    participant D as DynamoDB
+    participant User
+    participant React
+    participant FastAPI
+    participant Cognito
+    participant DynamoDB
 
-    U->>R: Enter email and password
-    R->>B: POST /api/v1/auth/login
-    B->>C: Verify credentials
-    C-->>B: Return JWT tokens
-    B->>D: Fetch user profile metadata
-    B-->>R: Return user and tokens
-    R-->>U: Redirect to dashboard
+    User->>React: Enter email and password
+    React->>FastAPI: POST /api/v1/auth/login
+    FastAPI->>Cognito: Validate credentials
+    Cognito-->>FastAPI: Return JWT tokens
+    FastAPI->>DynamoDB: Fetch user metadata
+    FastAPI-->>React: Return user and tokens
+    React-->>User: Redirect to dashboard
 ```
 
 ### File Upload Flow
 
 ```mermaid
 sequenceDiagram
-    participant U as User
-    participant R as React Frontend
-    participant B as FastAPI Backend
-    participant S as Amazon S3
-    participant D as DynamoDB
+    participant User
+    participant React
+    participant FastAPI
+    participant S3
+    participant DynamoDB
 
-    U->>R: Select file
-    R->>B: Request upload URL
-    B->>S: Generate pre-signed PUT URL
-    B->>D: Create uploading file metadata
-    B-->>R: Return pre-signed URL
-    R->>S: Upload file directly to S3
-    R->>B: Confirm upload completed
-    B->>D: Mark file as ACTIVE
-    B-->>R: Upload success
+    User->>React: Select file
+    React->>FastAPI: Request upload URL
+    FastAPI->>S3: Generate pre-signed PUT URL
+    FastAPI->>DynamoDB: Store file metadata as UPLOADING
+    FastAPI-->>React: Return upload URL
+    React->>S3: Upload file directly
+    React->>FastAPI: Confirm upload complete
+    FastAPI->>DynamoDB: Mark file as ACTIVE
 ```
 
-### Secure Share Download Flow
+### Secure Share Flow
 
 ```mermaid
 sequenceDiagram
-    participant O as File Owner
-    participant R as React Frontend
-    participant B as FastAPI Backend
-    participant D as DynamoDB
-    participant S as Amazon S3
-    participant N as Amazon SNS
-    participant V as Visitor
+    participant Owner
+    participant React
+    participant FastAPI
+    participant DynamoDB
+    participant S3
+    participant SNS
+    participant Visitor
 
-    O->>R: Create share link
-    R->>B: POST /api/v1/shares
-    B->>D: Store share link metadata
-    B->>N: Send file shared email
-    B-->>R: Return share URL
+    Owner->>React: Create share link
+    React->>FastAPI: POST /api/v1/shares
+    FastAPI->>DynamoDB: Store share metadata
+    FastAPI->>SNS: Send file shared email
+    FastAPI-->>React: Return share URL
 
-    V->>R: Open share URL
-    R->>B: Get public share details
-    B->>D: Validate link expiry/password/one-time status
-    B-->>R: Return file info
-    V->>R: Click download
-    R->>B: Request public download URL
-    B->>D: Validate share link
-    B->>S: Generate pre-signed GET URL
-    B->>D: Save download event and update count
-    B->>N: Send downloaded email
-    B-->>R: Return download URL
-    R-->>V: File downloads from S3
+    Visitor->>React: Open share URL
+    React->>FastAPI: Get public share details
+    FastAPI->>DynamoDB: Validate expiry/password/one-time status
+    FastAPI-->>React: Return file info
+    Visitor->>React: Click download
+    React->>FastAPI: Request download URL
+    FastAPI->>S3: Generate pre-signed GET URL
+    FastAPI->>DynamoDB: Save download event
+    FastAPI->>SNS: Send downloaded email
+    FastAPI-->>React: Return S3 download URL
+```
+
+---
+
+## Folder Structure
+
+### Frontend
+
+```text
+secureshare-frontend/
+├── public/
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── context/
+│   ├── hooks/
+│   ├── layouts/
+│   ├── pages/
+│   ├── routes/
+│   ├── styles/
+│   └── utils/
+├── package.json
+├── webpack.config.js
+├── babel.config.js
+├── tailwind.config.js
+└── .env.example
+```
+
+### Backend
+
+```text
+secureshare-backend/
+├── app/
+│   ├── api/
+│   ├── aws/
+│   ├── core/
+│   ├── repositories/
+│   ├── schemas/
+│   ├── services/
+│   └── utils/
+├── scripts/
+├── infra/
+├── requirements.txt
+└── .env.example
 ```
 
 ---
 
 ## DynamoDB Tables
 
-### secureshare-dev-users
-
-Stores user profile and storage metadata.
-
-Primary key:
-
-- Partition key: `userId`
-
-Important attributes:
-
-- email
-- fullName
-- storageUsedBytes
-- storageLimitBytes
-- totalFiles
-- totalFolders
-- status
-- createdAt
-- updatedAt
-
-### secureshare-dev-items
-
-Stores both files and folders.
-
-Primary key:
-
-- Partition key: `ownerId`
-- Sort key: `itemId`
-
-Important attributes:
-
-- itemType: FILE or FOLDER
-- parentFolderId
-- name
-- s3Key
-- fileSizeBytes
-- mimeType
-- status
-- isFavorite
-- downloadCount
-- viewCount
-- createdAt
-- updatedAt
-
-### secureshare-dev-share-links
-
-Stores secure share link details.
-
-Primary key:
-
-- Partition key: `shareId`
-
-Important attributes:
-
-- fileId
-- ownerId
-- shareUrl
-- expiresAt
-- isOneTime
-- hasPassword
-- status
-- downloadCount
-- createdAt
-
-### secureshare-dev-activity-logs
-
-Stores user activity logs.
-
-Primary key:
-
-- Partition key: `ownerId`
-- Sort key: `timestampLogId`
-
-Important actions:
-
-- LOGIN
-- UPLOAD
-- DOWNLOAD
-- DELETE
-- RESTORE
-- SHARE
-- RENAME
-- MOVE
-- COPY
-
-### secureshare-dev-download-events
-
-Stores detailed download analytics.
-
-Primary key:
-
-- Partition key: `fileId`
-- Sort key: `downloadedAtEventId`
-
-Important attributes:
-
-- eventId
-- ownerId
-- shareId
-- fileName
-- downloadedAt
-- ipAddress
-- userAgent
-- downloadStatus
+| Table | Purpose | Primary Key |
+|---|---|---|
+| secureshare-dev-users | User profile and storage metadata | userId |
+| secureshare-dev-items | Files and folders metadata | ownerId + itemId |
+| secureshare-dev-share-links | Secure share link settings | shareId |
+| secureshare-dev-activity-logs | User action logs | ownerId + timestampLogId |
+| secureshare-dev-download-events | Download analytics | fileId + downloadedAtEventId |
 
 ---
 
 ## API Overview
 
-### Authentication APIs
+### Auth APIs
 
 ```http
 POST /api/v1/auth/register
@@ -364,8 +358,6 @@ PATCH  /api/v1/files/{fileId}
 DELETE /api/v1/files/{fileId}
 POST   /api/v1/files/{fileId}/copy
 POST   /api/v1/files/{fileId}/move
-POST   /api/v1/files/{fileId}/favorite
-DELETE /api/v1/files/{fileId}/favorite
 
 POST   /api/v1/folders
 PATCH  /api/v1/folders/{folderId}
@@ -387,40 +379,14 @@ POST   /api/v1/shares
 GET    /api/v1/shares
 GET    /api/v1/shares/{shareId}
 DELETE /api/v1/shares/{shareId}
-
 GET    /api/v1/public/shares/{shareToken}
 POST   /api/v1/public/shares/{shareToken}/verify-password
 POST   /api/v1/public/shares/{shareToken}/download
 ```
 
-### Dashboard and Analytics APIs
-
-```http
-GET /api/v1/dashboard/summary
-GET /api/v1/dashboard/recent-uploads
-GET /api/v1/dashboard/recent-downloads
-GET /api/v1/analytics/most-downloaded
-GET /api/v1/analytics/download-events
-GET /api/v1/activity
-```
-
 ---
 
-## Deployment Architecture
-
-```mermaid
-flowchart TD
-    Browser[Browser] --> IP[EC2 Public IP]
-    IP --> Nginx[Nginx Port 80]
-    Nginx --> Static[React Static Files /var/www/secureshare]
-    Nginx --> APIProxy[/api proxy]
-    APIProxy --> FastAPI[FastAPI localhost:8000]
-    FastAPI --> AWS[AWS Services]
-```
-
----
-
-## Local Development
+## Local Development Setup
 
 ### Frontend
 
@@ -430,13 +396,29 @@ npm install
 npm start
 ```
 
-For local development with API Gateway backend:
+Frontend runs at:
+
+```text
+http://localhost:3000
+```
+
+Example local frontend `.env`:
 
 ```env
 REACT_APP_API_BASE_URL=https://YOUR_API_GATEWAY_URL/api/v1
 ```
 
+or if calling EC2 backend directly:
+
+```env
+REACT_APP_API_BASE_URL=http://YOUR_EC2_PUBLIC_IP:8000/api/v1
+```
+
+---
+
 ### Backend on EC2
+
+Backend runs as a systemd service:
 
 ```bash
 sudo systemctl status secureshare-backend
@@ -444,11 +426,19 @@ sudo systemctl restart secureshare-backend
 sudo tail -f /var/log/secureshare-backend.log
 ```
 
+Health check:
+
+```bash
+curl http://localhost:8000/health
+```
+
 ---
 
-## Production Build for Nginx
+## EC2 and Nginx Deployment
 
-Before building frontend for EC2/Nginx:
+### Build frontend for Nginx deployment
+
+Before building, set frontend `.env`:
 
 ```env
 REACT_APP_API_BASE_URL=/api/v1
@@ -457,11 +447,12 @@ REACT_APP_API_BASE_URL=/api/v1
 Build:
 
 ```bash
+cd secureshare-frontend
 npm run build
 zip -r secureshare-frontend-dist.zip dist
 ```
 
-Upload:
+Upload to EC2:
 
 ```bash
 scp -i your-key.pem secureshare-frontend-dist.zip ec2-user@YOUR_EC2_PUBLIC_IP:/home/ec2-user/
@@ -480,45 +471,115 @@ sudo chmod -R 755 /var/www/secureshare
 sudo systemctl reload nginx
 ```
 
+Nginx serves the app at:
+
+```text
+http://YOUR_EC2_PUBLIC_IP
+```
+
 ---
 
-## Security Practices Used
+## Environment Variables
 
-- No AWS access keys inside application code
-- EC2 IAM Role used for AWS service permissions
-- S3 bucket kept private
-- File access through temporary pre-signed URLs
-- Password-protected share links hashed before storage
-- Cognito handles password management
-- Backend validates ownership before file operations
-- CORS configured for trusted frontend origins
-- Activity logs stored for auditing
+### Backend `.env`
+
+```env
+APP_NAME=SecureShare
+APP_ENV=dev
+AWS_REGION=ap-south-1
+
+FRONTEND_PUBLIC_URL=http://YOUR_EC2_PUBLIC_IP
+BACKEND_CORS_ORIGINS=http://localhost:3000,http://YOUR_EC2_PUBLIC_IP
+
+COGNITO_USER_POOL_ID=YOUR_COGNITO_USER_POOL_ID
+COGNITO_APP_CLIENT_ID=YOUR_COGNITO_APP_CLIENT_ID
+
+S3_BUCKET_NAME=YOUR_S3_BUCKET_NAME
+S3_PRESIGNED_URL_EXPIRES_SECONDS=900
+
+DDB_USERS_TABLE=secureshare-dev-users
+DDB_ITEMS_TABLE=secureshare-dev-items
+DDB_SHARE_LINKS_TABLE=secureshare-dev-share-links
+DDB_ACTIVITY_LOGS_TABLE=secureshare-dev-activity-logs
+DDB_DOWNLOAD_EVENTS_TABLE=secureshare-dev-download-events
+
+SNS_TOPIC_ARN=YOUR_SNS_TOPIC_ARN
+DEFAULT_STORAGE_LIMIT_BYTES=10737418240
+```
+
+### Frontend `.env`
+
+For local development:
+
+```env
+REACT_APP_API_BASE_URL=https://YOUR_API_GATEWAY_URL/api/v1
+```
+
+For Nginx deployment:
+
+```env
+REACT_APP_API_BASE_URL=/api/v1
+```
+
+---
+
+## Security Highlights
+
+- AWS access keys are not stored in the application
+- EC2 IAM Role is used for AWS permissions
+- S3 bucket remains private
+- Files are accessed using temporary pre-signed URLs
+- Cognito handles password storage and authentication
+- Share link passwords are hashed before storage
+- Backend validates file ownership before operations
+- Activity logs are maintained for auditing
+- CORS is configured for trusted origins
 
 ---
 
 ## Future Enhancements
 
-- Multi-file upload with drag-and-drop
-- File preview for PDF/images
 - QR code generation for share links
-- Advanced role-based organization workspace
-- Admin panel
-- Team folders
-- File comments
+- File preview for images and PDFs
+- File version history
 - Virus scanning using Lambda and ClamAV
-- S3 lifecycle rules for trash cleanup
-- CloudFront CDN with HTTPS
+- Team workspace with roles such as Admin, Faculty, Student, Employee
+- Request-file upload links
+- CloudFront CDN
 - Route 53 custom domain
-- HTTPS with ACM certificate
+- HTTPS using ACM/Nginx SSL
 - MFA login using Cognito
-- Device/session management
-- Real-time upload notifications
-- File version history UI
-- Storage quota enforcement and billing dashboard
+- Admin dashboard
+- CI/CD pipeline using GitHub Actions
 - Mobile app using React Native
 
 ---
 
-## Resume Summary
+## Project Status
 
-Developed SecureShare, a secure cloud file-sharing platform using React, FastAPI, and AWS. Implemented authentication with Amazon Cognito, private file storage with Amazon S3, metadata and analytics using DynamoDB, secure sharing with expiring and one-time links, password-protected downloads, email notifications using SNS, backend deployment on EC2, API routing through API Gateway/Nginx, and monitoring using CloudWatch. The platform supports folder management, trash restore/permanent delete, multi-file move/copy, download analytics, and activity logs.
+Completed features:
+
+- Authentication
+- File upload/download
+- Folder management
+- Trash and permanent delete
+- Move/copy files and folders
+- Multi-select operations
+- Secure share links
+- Password protected links
+- One-time download links
+- Custom expiry links
+- Download analytics
+- Activity logs
+- SNS email notifications
+- EC2 and Nginx deployment
+
+---
+
+## Author
+
+Developed as a full-stack AWS cloud project to demonstrate secure file sharing, cloud storage, authentication, API development, and deployment skills.
+
+- Kotti Satyanarayana
+- Lokireddy Karthikeya
+- Gampa Navaneeth
