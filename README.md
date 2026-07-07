@@ -580,6 +580,6 @@ Completed features:
 
 Developed as a full-stack AWS cloud project to demonstrate secure file sharing, cloud storage, authentication, API development, and deployment skills.
 
-- Kotti Satyanarayana
-- Lokireddy Karthikeya
-- Gampa Navaneeth
+- Kotti Satyanarayana    -S210052
+- Lokireddy Karthikeya   -S210152
+- Gampa Navaneeth        -N210471
